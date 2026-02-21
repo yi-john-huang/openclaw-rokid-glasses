@@ -1,0 +1,37 @@
+services:
+  rokid-bridge:
+    build: .
+    image: rokid-bridge:latest
+    container_name: rokid-bridge
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8090}:8090"
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    environment:
+      - ROKID_ACCESS_KEY=${ROKID_ACCESS_KEY}
+      - UPSTREAM_TOKEN=${UPSTREAM_TOKEN}
+      - UPSTREAM_URL=${UPSTREAM_URL:-http://host.docker.internal:8080}
+      - ROKID_AGENT_ID=${ROKID_AGENT_ID:-}
+      - ROKID_RATE_LIMIT=${ROKID_RATE_LIMIT:-30}
+      - ROKID_REPLAY_WINDOW=${ROKID_REPLAY_WINDOW:-300}
+      - ROKID_MAX_HISTORY_TURNS=${ROKID_MAX_HISTORY_TURNS:-20}
+      - ROKID_IMAGE_DETAIL=${ROKID_IMAGE_DETAIL:-low}
+      - PORT=${PORT:-8090}
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8090/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

@@ -1,0 +1,14 @@
+# Co-deploy with openclaw-secure-stack
+# Usage: docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
+services:
+  rokid-bridge:
+    networks:
+      - openclaw-net
+    environment:
+      - UPSTREAM_URL=http://openclaw-secure-stack:8080
+    ports: []
+
+networks:
+  openclaw-net:
+    external: true
+    name: openclaw-secure-stack_internal
