@@ -72,3 +72,7 @@ logs/
 
 # OS
 Thumbs.db
+
+# Claude Code workflow tooling (developer-local, not project-specific)
+.claude/
+CLAUDE.md
